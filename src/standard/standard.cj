@@ -3,10 +3,7 @@ package bloom4cj.standard
 import bloom4cj.*
 import std.collection.*
 
-class StandardBloom <: Bloom {
-
-/*------------------------------------------------类的属性部分-----------------------------------------------------*/
-
+public class StandardBloom <: Bloom {
     // 配置的六大参数部分
     private var m: Int64   // bit总位数
     private var k: Int64   // 哈希函数的数量
@@ -20,8 +17,6 @@ class StandardBloom <: Bloom {
     private var c: Int64   // 已插入元素计数
     private var bs: Array<Int64> // 存储一次哈希函数计算得到的k个位置
     private var HashFunction : (String) -> Int64 = { x => 0}  //哈希函数
-
-/*------------------------------------------------初始化参数部分（待拓展修改错误率和填充比率）-----------------------------------------------------*/
 
     // 构造函数，默认p=0.5，e=0.001 初始化所有参数
     public init(n: Int64) {
@@ -80,8 +75,6 @@ class StandardBloom <: Bloom {
         this.HashFunction = computeBitPositions
     }
 
-/*------------------------------------------------基础功能部分-----------------------------------------------------*/
-
     // 重置布隆过滤器，清空所有内容保持原本大小，根据结果返回Bool
     public func reset() : Bool {
         this.k = K(this.e)
@@ -99,7 +92,7 @@ class StandardBloom <: Bloom {
     }
 
     // 打印这个数据结构的相关当前统计信息
-    public func printStats(){
+    public func printStats(): Unit{
         println("m = ${this.m},n = ${this.n}, k = ${this.k}, s = ${this.s}, p = ${this.p}, e = ${this.e}")
         println("Total items: ${this.c}")
         let c = this.countBitsSet()
@@ -112,19 +105,17 @@ class StandardBloom <: Bloom {
         this.HashFunction = function
     }
 
-/*------------------------------------------------哈希函数部分-----------------------------------------------------*/
-
     // 默认哈希函数
     private func computeBitPositions(key: String): Int64{
         // FNV-1a 32位哈希的初始值和常数
-        let FNV_OFFSET_BASIS = 0x811C9DC5
-        let FNV_32_PRIME = 0x01000193
+        let FNV_OFFSET_BASIS:Int64 = 0x811C9DC5
+        let FNV_32_PRIME:Int64 = 0x01000193
 
         // 计算 FNV-1a 32位哈希值
         var hash = FNV_OFFSET_BASIS
         for(b in key){
             hash = hash ^ Int64(b)
-            hash = hash * FNV_32_PRIME
+            // hash = hash * FNV_32_PRIME
         }
         return hash;
     }
@@ -143,10 +134,8 @@ class StandardBloom <: Bloom {
             bs[i] = position
         }
     }
-
-/*------------------------------------------------核心功能部分（哈希函数部分未实现）-----------------------------------------------------*/
     
-    public func add(key: String){
+    public func add(key: String): Unit{
         this.hashCalculate(key)
         for (i in 0..this.k) {
             this.setBit(this.bs[i])
@@ -163,8 +152,6 @@ class StandardBloom <: Bloom {
         }
         return true
     }
-    
-/*------------------------------------------------内部功能部分（不向用户开放）-----------------------------------------------------*/
 
     // 设置一个位为true
     private func setBit(index: Int64){

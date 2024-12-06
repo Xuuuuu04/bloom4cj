@@ -12,7 +12,7 @@ class BloomFilterTest {
 
     private func calculateCRC32(data: String){
         let CRC32_POLYNOMIAL = 0xEDB88320
-        let CRC32_TABLE= Array<Int64>(0,repeat:0)
+        let CRC32_TABLE= Array<Int64>(256,repeat:0)
 
         for(i in 0..256){
             var crc = i
@@ -45,27 +45,28 @@ class BloomFilterTest {
         // 检查web2中的元素
         for (word in web2) {
             bf.add(word);
-            if (!bf.contains(word)) {
+            if (!bf.check(word)) {
                 fn++; // false negative
             }
         }
 
         // 检查web2a中的元素
         for (word in web2a) {
-            if (bf.contains(word)) {
+            if (bf.check(word)) {
                 fp++; // false positive
             }
         }
 
         // 误报率
-        @Expect(fn/web2.size < 1, 1)
+        @Expect(fn/web2.size < 1, true)
         // 错报率
-        @Expect(fp/web2.size < 1, 1)
+        @Expect(fp/web2.size < 1, true)
     }
 
     @TestCase
     public func testBloomFilterWithCRC(){
-        let bf = StandardBloom(1000,calculateCRC32)
+        let bf = StandardBloom(1000)
+        bf.setHashFunction(calculateCRC32)
 
         var fn = 0
         var fp = 0
@@ -73,21 +74,21 @@ class BloomFilterTest {
         // 检查web2中的元素
         for (word in web2) {
             bf.add(word);
-            if (!bf.contains(word)) {
+            if (!bf.check(word)) {
                 fn++; // false negative
             }
         }
 
         // 检查web2a中的元素
         for (word in web2a) {
-            if (bf.contains(word)) {
+            if (bf.check(word)) {
                 fp++; // false positive
             }
         }
 
         // 误报率
-        @Expect(fn/web2.size < 1, 1)
+        @Expect(fn/web2.size < 1, true)
         // 错报率
-        @Expect(fp/web2.size < 1, 1)
+        @Expect(fp/web2.size < 1, true)
     }
 }
