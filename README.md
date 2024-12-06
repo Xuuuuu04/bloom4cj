@@ -107,8 +107,8 @@ func calculateCRC32(data: String){
 }
 
 main() {
-		let bf = StandardBloom(1000)
-        bf.setHashFunction(calculateCRC32)
+	let bf = StandardBloom(1000)
+    bf.setHashFunction(calculateCRC32)
 }
 ```
 
