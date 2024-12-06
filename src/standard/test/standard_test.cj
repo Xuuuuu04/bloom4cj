@@ -10,6 +10,7 @@ class BloomFilterTest {
     private let web2: Array<String> = ["apple","banana","cherry"]
     private let web2a: Array<String> = ["orange","pear","peach"]
 
+    // CRC32哈希函数
     private func calculateCRC32(data: String){
         let CRC32_POLYNOMIAL = 0xEDB88320
         let CRC32_TABLE= Array<Int64>(256,repeat:0)
@@ -38,7 +39,6 @@ class BloomFilterTest {
     @TestCase
     public func testBloomFilterWithFNV(){
         let bf = StandardBloom(1000)
-
         var fn = 0
         var fp = 0
         
@@ -58,9 +58,9 @@ class BloomFilterTest {
         }
 
         // 误报率
-        @Expect(fn/web2.size < 1, true)
+        @Expect(Float64(fn)/Float64(web2.size) < 0.005, true)
         // 错报率
-        @Expect(fp/web2.size < 1, true)
+        @Expect(Float64(fp)/Float64(web2.size) < 0.005, true)
     }
 
     @TestCase
@@ -87,8 +87,8 @@ class BloomFilterTest {
         }
 
         // 误报率
-        @Expect(fn/web2.size < 1, true)
+        @Expect(Float64(fn)/Float64(web2.size) < 0.005, true)
         // 错报率
-        @Expect(fp/web2.size < 1, true)
+        @Expect(Float64(fp)/Float64(web2.size) < 0.005, true)
     }
 }
