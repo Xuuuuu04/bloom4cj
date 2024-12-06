@@ -1,8 +1,8 @@
 package bloom4cj.standard
 
-import std.math as math
+import bloom4cj.*
 
-class StandardBloom <: bloomInterface {
+class StandardBloom <: Bloom {
 
 /*------------------------------------------------类的属性部分-----------------------------------------------------*/
 
@@ -25,43 +25,26 @@ class StandardBloom <: bloomInterface {
     public init(n: Int64) {
         let defaultP: Float64 = 0.5
         let defaultE: Float64 = 0.001
-        let defaultK: Int64 = StandardBloom.K(defaultE)
-        let defaultM: Int64 = StandardBloom.M(n, defaultP, defaultE)
+        let defaultK: Int64 = K(defaultE)
+        let defaultM: Int64 = M(n, defaultP, defaultE)
         this.n = n
         this.p = defaultP
         this.e = defaultE
         this.k = defaultK
         this.m = defaultM
-        this.s = StandardBloom.S(this.m, this.k)
+        this.s = S(this.m, this.k)
         this.b = Array<Bool>(this.m, repeat: false)
         this.bs = Array<Int64>(this.k, repeat: 0)
         this.c = 0
-    }
-
-    // K(e)的计算公式不变
-    static public func K(e: Float64) : Int64 {
-        return Int64(math.ceil(math.log(1.0 / e) / math.log(2.0)))
-    }
-
-    // M(n,p,e)的计算公式不变
-    static public func M(n: Int64, p: Float64, e: Float64) : Int64 {
-        let numerator = Float64(n)
-        let denominator = (math.log(p) * math.log(1.0 - p)) / math.abs(math.log(e))
-        return Int64(math.ceil(numerator / denominator))
-    }
-
-    // S(m,k)的计算公式不变
-    static public func S(m: Int64, k: Int64) : Int64 {
-        return Int64(math.ceil(Float64(m) / Float64(k)))
     }
 
 /*------------------------------------------------基础功能部分-----------------------------------------------------*/
 
     //重置布隆过滤器，清空所有内容保持原本大小，根据结果返回Bool
     public func reset() : Bool {
-        this.k = StandardBloom.K(this.e)
-        this.m = StandardBloom.M(this.n, this.p, this.e)
-        this.s = StandardBloom.S(this.m, this.k)
+        this.k = K(this.e)
+        this.m = M(this.n, this.p, this.e)
+        this.s = S(this.m, this.k)
         this.b = Array<Bool>(this.m, repeat:false)
         this.bs = Array<Int64>(this.k, repeat : 0)
         this.c = 0
