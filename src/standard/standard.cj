@@ -19,6 +19,7 @@ class StandardBloom <: Bloom {
     // 其他辅助功能部分
     private var c: Int64   // 已插入元素计数
     private var bs: Array<Int64> // 存储一次哈希函数计算得到的k个位置
+    private var HashFunction : (String) -> Int64 = { x => 0}  //哈希函数
 
 /*------------------------------------------------初始化参数部分（待拓展修改错误率和填充比率）-----------------------------------------------------*/
 
@@ -28,6 +29,7 @@ class StandardBloom <: Bloom {
         let defaultE: Float64 = 0.001
         let defaultK: Int64 = K(defaultE)
         let defaultM: Int64 = M(n, defaultP, defaultE)
+
         this.n = n
         this.p = defaultP
         this.e = defaultE
@@ -37,11 +39,50 @@ class StandardBloom <: Bloom {
         this.b = Array<Bool>(this.m, repeat: false)
         this.bs = Array<Int64>(this.k, repeat: 0)
         this.c = 0
+        this.HashFunction = computeBitPositions
+    }
+
+    // 构造函数，默认p=0.5，初始化所有参数
+    public init(n: Int64,e:Float64) {
+        let defaultP: Float64 = 0.5
+        let defaultE: Float64 = e
+        let defaultK: Int64 = K(defaultE)
+        let defaultM: Int64 = M(n, defaultP, defaultE)
+
+        this.n = n
+        this.p = defaultP
+        this.e = defaultE
+        this.k = defaultK
+        this.m = defaultM
+        this.s = S(this.m, this.k)
+        this.b = Array<Bool>(this.m, repeat: false)
+        this.bs = Array<Int64>(this.k, repeat: 0)
+        this.c = 0
+        this.HashFunction = computeBitPositions
+    }
+
+    // 构造函数，默认初始化所有参数
+    public init(n: Int64,e:Float64,p:Float64) {
+        let defaultP: Float64 = p
+        let defaultE: Float64 = e
+        let defaultK: Int64 = K(defaultE)
+        let defaultM: Int64 = M(n, defaultP, defaultE)
+
+        this.n = n
+        this.p = defaultP
+        this.e = defaultE
+        this.k = defaultK
+        this.m = defaultM
+        this.s = S(this.m, this.k)
+        this.b = Array<Bool>(this.m, repeat: false)
+        this.bs = Array<Int64>(this.k, repeat: 0)
+        this.c = 0
+        this.HashFunction = computeBitPositions
     }
 
 /*------------------------------------------------基础功能部分-----------------------------------------------------*/
 
-    //重置布隆过滤器，清空所有内容保持原本大小，根据结果返回Bool
+    // 重置布隆过滤器，清空所有内容保持原本大小，根据结果返回Bool
     public func reset() : Bool {
         this.k = K(this.e)
         this.m = M(this.n, this.p, this.e)
@@ -52,25 +93,29 @@ class StandardBloom <: Bloom {
         return true
     }
 
-    // count(): 返回已插入元素数
+    // 返回已插入元素数
     public func count() : Int64 {
         return this.c
     }
 
-    // printStats(): 打印这个数据结构的相关当前统计信息，返回Bool
-    public func printStats() : Bool {
+    // 打印这个数据结构的相关当前统计信息
+    public func printStats(){
         println("m = ${this.m},n = ${this.n}, k = ${this.k}, s = ${this.s}, p = ${this.p}, e = ${this.e}")
         println("Total items: ${this.c}")
         let c = this.countBitsSet()
         let ratio = (Float64(c)/Float64(this.m))*100.0
-        println("Total bits set: ${this.c} ( + ${ratio} + %)")
-        return true
+        println("Total bits set: ${c} ( ${ratio}% )")
+    }
+
+    // 设置用户自定义的哈希函数
+    public func setHashFunction(function:(String) -> Int64){
+        this.HashFunction = function
     }
 
 /*------------------------------------------------哈希函数部分-----------------------------------------------------*/
 
-    // 这个函数负责计算添加进来的key：Array<Byte>的哈希结果，并将其通过处理函数计算得到多个位置存储到bs变量中
-    private func computeBitPositions(key: Array<Byte>): Int64{
+    // 默认哈希函数
+    private func computeBitPositions(key: String): Int64{
         // FNV-1a 32位哈希的初始值和常数
         let FNV_OFFSET_BASIS = 0x811C9DC5
         let FNV_32_PRIME = 0x01000193
@@ -78,32 +123,39 @@ class StandardBloom <: Bloom {
         // 计算 FNV-1a 32位哈希值
         var hash = FNV_OFFSET_BASIS
         for(b in key){
-            hash = hash^0xFF
-            hash = hash*FNV_32_PRIME
+            hash = hash ^ Int64(b)
+            hash = hash * FNV_32_PRIME
         }
         return hash;
     }
 
     // 使用偏移量来生成不同的哈希值
-    private func DealHashResult(baseHash: Int64, offset:Int64): Int64{
+    private func dealHashResult(baseHash: Int64, offset:Int64): Int64{
         return baseHash ^ (offset * 0x9E3779B9); // 0x9E3779B9 是黄金分割数常数
+    }
+    
+    // 通过偏移量模拟多个哈希函数的计算结果，记录到bs中
+    private func hashCalculate(key: String) {
+        let baseHash = this.HashFunction(key)
+        for (i in 0..this.k) {
+            let partition = i
+            let position = ((dealHashResult(baseHash, i) % this.s) + (partition * this.s)) % this.m
+            bs[i] = position
+        }
     }
 
 /*------------------------------------------------核心功能部分（哈希函数部分未实现）-----------------------------------------------------*/
     
-    // add(key): 添加元素  等待Hash函数计算结果的部分
-    public func add(key: Array<Byte>) : Bool {
-        this.computeBitPositions(key)// 这个函数负责计算添加进来的key：Array<Byte>的哈希结果，并将其通过处理函数计算得到多个位置存储到bs变量中
+    public func add(key: String){
+        this.hashCalculate(key)
         for (i in 0..this.k) {
             this.setBit(this.bs[i])
         }
         this.c += 1
-        return true
     }
 
-    // check(key): 检查元素是否可能存在  等待Hash函数计算结果的部分
-    public func check(key: Array<Byte>) : Bool {
-        this.computeBitPositions(key)
+    public func check(key: String) : Bool {
+        this.hashCalculate(key)
         for (i in 0..this.k) {
             if(!this.testBit(this.bs[i])) {
                 return false
@@ -115,9 +167,8 @@ class StandardBloom <: Bloom {
 /*------------------------------------------------内部功能部分（不向用户开放）-----------------------------------------------------*/
 
     // 设置一个位为true
-    private func setBit(index: Int64) : Bool {
+    private func setBit(index: Int64){
         this.b[index] = true
-        return true
     }
 
     // 看看这个位设置成功没有

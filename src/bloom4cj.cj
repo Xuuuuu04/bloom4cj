@@ -3,10 +3,10 @@ package bloom4cj
 import std.math.*
 
 interface Bloom {
-    func add(key : Array<Byte>) : Bool
-    func check(key : Array<Byte>) : Bool
+    func add(key : String) : Unit
+    func check(key : String) : Bool
     func count() : Int64
-    func printStats() : Bool
+    func printStats() : Unit
     func reset() : Bool
 }
 
