@@ -41,7 +41,6 @@
     		└── standard_test.cj
   	    └── standard.cj            
     └── bloom4cj.cj            
-    └── .cj      
 ```
 
 ### 接口说明
