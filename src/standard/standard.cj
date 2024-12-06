@@ -1,6 +1,7 @@
 package bloom4cj.standard
 
 import bloom4cj.*
+import std.collection.*
 
 class StandardBloom <: Bloom {
 
@@ -69,15 +70,23 @@ class StandardBloom <: Bloom {
 /*------------------------------------------------哈希函数部分-----------------------------------------------------*/
 
     // 这个函数负责计算添加进来的key：Array<Byte>的哈希结果，并将其通过处理函数计算得到多个位置存储到bs变量中
-    private func computeBitPositions(key: Array<Byte>): Bool{
-        // 缺少具体实现
-        return true;
+    private func computeBitPositions(key: Array<Byte>): Int64{
+        // FNV-1a 32位哈希的初始值和常数
+        let FNV_OFFSET_BASIS = 0x811C9DC5
+        let FNV_32_PRIME = 0x01000193
+
+        // 计算 FNV-1a 32位哈希值
+        var hash = FNV_OFFSET_BASIS
+        for(b in key){
+            hash = hash^0xFF
+            hash = hash*FNV_32_PRIME
+        }
+        return hash;
     }
 
-    // 单次哈希结果的处理函数
-    private func DealHashResult(hasCalculateResult: Array<Byte>): Bool{
-        // 缺少具体实现
-        return true;
+    // 使用偏移量来生成不同的哈希值
+    private func DealHashResult(baseHash: Int64, offset:Int64): Int64{
+        return baseHash ^ (offset * 0x9E3779B9); // 0x9E3779B9 是黄金分割数常数
     }
 
 /*------------------------------------------------核心功能部分（哈希函数部分未实现）-----------------------------------------------------*/
