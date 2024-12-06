@@ -72,9 +72,9 @@ cjpm build
 示例代码如下：
 ```cangjie
 main() {
-		let bf = StandardBloom(1000)
-        bf.add("Hello")
-        bf.check("Hello")
+	let bf = StandardBloom(1000)
+    bf.add("Hello")
+    bf.check("Hello")
 }
 ```
 #### 自定义哈希函数
