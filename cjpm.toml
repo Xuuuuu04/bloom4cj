@@ -5,7 +5,7 @@
   compile-option = ""
   description = "nothing here"
   link-option = ""
-  name = "cache4cj"
+  name = "bloom4cj"
   output-type = "executable"
   override-compile-option = ""
   src-dir = ""
