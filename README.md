@@ -19,7 +19,7 @@
 - 分区结构：将位数组分为多个分区，提高内存和查找效率。
 - 灵活的哈希函数：支持自定义哈希函数，未定义时使用默认哈希函数。
 - 高效的存储与查找：使用位数组和多个哈希函数实现高效的查找操作。
-- 本项目迁移自[zentures](https://github.com/zentures/bloom)
+- 本项目迁移自[zentures](https://github.com/zentures/bloom)。
 
 ### 项目计划
 
