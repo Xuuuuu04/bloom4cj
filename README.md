@@ -54,7 +54,7 @@
 | `public func count() : Int64` | 返回已插入的元素数量。 |
 | `public func printStats() : Unit` | 打印当前bloom过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
 | `public func setHashFunction(function: (String) -> Int64)` | 设置用户自定义的哈希函数，用于生成位数组的位置。 |
-| `public func add(key: String) : Unit` | 向布隆过滤器中添加一个元素 `key`。 |
+| `public func add(key: String) : Unit` | 向bloom过滤器中添加一个元素 `key`。 |
 | `public func check(key: String) : Bool` | 检查元素 `key` 是否可能存在于bloom过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
 
 
