@@ -4,19 +4,26 @@ import bloom4cj.*
 import std.collection.*
 
 public class StandardBloom <: Bloom {
-    // 配置的六大参数部分
-    private var m: Int64   // bit总位数
-    private var k: Int64   // 哈希函数的数量
-    private var s: Int64   // 分片大小
-    private var p: Float64 // 填充比率
-    private var e: Float64 // 误报率
-    private var n: Int64   // 预计存放的元素数 只有这个是需要传入的
-    // 主要数据结构部分
-    private var b: Array<Bool> // 位数组（bitset）
-    // 其他辅助功能部分
-    private var c: Int64   // 已插入元素计数
-    private var bs: Array<Int64> // 存储一次哈希函数计算得到的k个位置
-    private var HashFunction : (String) -> Int64 = { x => 0}  //哈希函数
+    // bit总位数
+    private var m: Int64  
+    // 哈希函数的数量
+    private var k: Int64   
+    // 分片大小
+    private var s: Int64   
+    // 填充比率
+    private var p: Float64 
+    // 误报率
+    private var e: Float64 
+    // 预计存放的元素数 只有这个是需要传入的
+    private var n: Int64   
+    // 位数组（bitset）
+    private var b: Array<Bool> 
+    // 已插入元素计数
+    private var c: Int64   
+    // 存储一次哈希函数计算得到的k个位置
+    private var bs: Array<Int64> 
+    // 哈希函数
+    private var HashFunction : (String) -> Int64 = { x => 0}  
 
     // 构造函数，默认p=0.5，e=0.001 初始化所有参数
     public init(n: Int64) {
@@ -115,14 +122,14 @@ public class StandardBloom <: Bloom {
         var hash = FNV_OFFSET_BASIS
         for(b in key){
             hash = hash ^ Int64(b)
-            // hash = hash * FNV_32_PRIME
         }
         return hash;
     }
 
     // 使用偏移量来生成不同的哈希值
     private func dealHashResult(baseHash: Int64, offset:Int64): Int64{
-        return baseHash ^ (offset * 0x9E3779B9); // 0x9E3779B9 是黄金分割数常数
+        // 0x9E3779B9 是黄金分割数常数
+        return baseHash ^ (offset * 0x9E3779B9); 
     }
     
     // 通过偏移量模拟多个哈希函数的计算结果，记录到bs中
@@ -134,7 +141,8 @@ public class StandardBloom <: Bloom {
             bs[i] = position
         }
     }
-    
+
+    // 向bloom过滤器中添加一个元素
     public func add(key: String): Unit{
         this.hashCalculate(key)
         for (i in 0..this.k) {
@@ -142,7 +150,8 @@ public class StandardBloom <: Bloom {
         }
         this.c += 1
     }
-
+    
+    // 检查元素 key 是否可能存在于bloom过滤器中
     public func check(key: String) : Bool {
         this.hashCalculate(key)
         for (i in 0..this.k) {
