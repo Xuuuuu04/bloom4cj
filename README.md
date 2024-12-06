@@ -40,7 +40,7 @@
 		└── test						# 测试代码目录
     		└── standard_test.cj
   	    └── standard.cj            
-    └── standard.cj            
+    └── bloom4cj.cj            
     └── .cj      
 ```
 
