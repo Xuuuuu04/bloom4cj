@@ -52,6 +52,19 @@ struct StandardBloom <: Bloom {
         this.bs = Array<UInt64>(Int64(k), repeat: 0)
         this.b = BitSet(m)
     }
+
+    // 通过自定义参数初始化Bloom过滤器
+    public init(n : UInt64 , e : Float64 , p : Float64) {
+        this.n = n
+        this.c = 0
+        this.e = e
+        this.p = p
+        this.m = M(n, p, e)
+        this.k = K(e)
+        this.s = S(m, k)
+        this.bs = Array<UInt64>(Int64(k), repeat: 0)
+        this.b = BitSet(m)
+    }
     
     // 设置Bloom过滤器使用的Hash函数
     public mut func setHasher(h : (Array<Byte>)->UInt64) : Unit {

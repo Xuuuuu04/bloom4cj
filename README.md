@@ -133,11 +133,9 @@ main() {
 ```
 
 ## 约束与限制
-环境限制：无
-
-版本限制：无
-
-依赖版本：无
+依赖项目：
+    [pudge4cj](https://gitcode.com/leaveWhite9088/pudge4cj/overview)
+    [@leaveWhite088](https://gitcode.com/leaveWhite9088)
 
 ## 开源协议
 本项目基于 MIT License
