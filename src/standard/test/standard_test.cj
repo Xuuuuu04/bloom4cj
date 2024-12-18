@@ -3,11 +3,12 @@ import std.unittest.*
 import std.unittest.testmacro.*
 import bloom4cj.standard.*
 import std.core.Exception
+import pudge4cj.*
 
 @Test
 public class Bloom4cjTest{
     
-    // 采用pudge4cj中自定义的方法导入的多种数据
+    // 采用pudge4cj中自定义的方法导入的多种类型的数据
     var web1: Array<Array<Byte>> = [
         StandardBloom.valToBinaryFromPudge<String>("我爱国家"),
         StandardBloom.valToBinaryFromPudge<Int64>(1234567890),
@@ -31,7 +32,7 @@ public class Bloom4cjTest{
         StandardBloom.valToBinaryFromPudge<Float64>(1.414213562)
     ]
 
-    // 采用pudge4cj中自定义的方法导入的多种数据
+    // 采用pudge4cj中自定义的方法导入的多种类型的数据
     var web2: Array<Array<Byte>> = [
         StandardBloom.valToBinaryFromPudge<String>("欢迎来到编程世界"),
         StandardBloom.valToBinaryFromPudge<Int64>(987654321098765432),
@@ -55,7 +56,7 @@ public class Bloom4cjTest{
         StandardBloom.valToBinaryFromPudge<Float64>(1.6180339887)
     ] 
 
-    // 采用CangJie自带的toArray方法导入的数据
+    // 采用CangJie自带的toArray方法导入的多种类型的数据
     var web3: Array<Array<Byte>> = [
         "创新科技".toArray(),
         "智能算法".toArray(),
@@ -79,7 +80,7 @@ public class Bloom4cjTest{
         "2.1".toArray()
     ]
 
-    // 采用CangJie自带的toArray方法导入的数据
+    // 采用CangJie自带的toArray方法导入的多张类型的数据
     var web4: Array<Array<Byte>> = [
         "生物信息学".toArray(),
         "纳米技术".toArray(),
@@ -141,7 +142,7 @@ public class Bloom4cjTest{
 
     // 自定义方法导入数据，并自定义CRC64哈希函数测试Bloom过滤器的准确性
     @TestCase
-    public func BenchmarkBloomCRC64ByPudge(){
+    public func testBloomFilterCRC64ByPudge(){
         // 假阴性计数器
         var fn = 0
         // 假阳性计数器
@@ -214,7 +215,7 @@ public class Bloom4cjTest{
 
     // toArray方法导入数据，并自定义CRC64哈希函数测试Bloom过滤器的准确性
     @TestCase
-    public func BenchmarkBloomCRC64(){
+    public func testBloomFilterCRC64(){
         // 假阴性计数器
         var fn = 0
         // 假阳性计数器
@@ -260,7 +261,7 @@ public class Bloom4cjTest{
         for (b in data) {
             crc ^= UInt64(b)  
             // 处理每个字节的8位
-            for (i in 0..7) {
+            for (_ in 0..7) {
                 if ((crc & 1) != 0) {
                     crc = (crc >> 1) ^ poly  
                 } else {
