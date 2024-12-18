@@ -69,7 +69,7 @@ cjpm build
 
 ### 功能示例
 
-#### 初始化bloom过滤器并添加、检查元素
+#### 初始化Bloom过滤器并添加、检查元素
 示例代码如下：
 ```cangjie
 main() {
@@ -110,6 +110,7 @@ func CRC64Hash(data: Array<Byte>) : UInt64 {
     // 返回无符号的CRC值
     return crc
 }
+
 main() {
     // 初始化 Bloom 过滤器，预计存储 1000 个元素
     let bf = StandardBloom(n: 1000)
