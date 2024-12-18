@@ -56,7 +56,7 @@
 | `public func check(item: Array<Byte>) : Bool` | 检查元素 `item` 是否可能存在于 Bloom 过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
 | `public func count() : UInt64` | 返回已插入的元素数量。 |
 | `public func printStats() : Unit` | 打印当前 Bloom 过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
-| `public static func valToBinaryFromPudge<T>(value: T) where T <: Serializable<T>` | 调用外部接口将对象通过序列化的方式，转化为字节数组。转化的对象必须要实现Serializable接口。 |
+| `public static func valToBinaryFromPudge<T>(value: T) where T <: Serializable<T>` | 调用外部接口将对象通过序列化的方式，转化为字节数组。转化的对象必须要实现`Serializable`接口。 |
 
 
 
