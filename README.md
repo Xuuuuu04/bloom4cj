@@ -47,15 +47,16 @@
 | 名称 | 用途 |
 | --- | --- |
 | `public init(n: UInt64)` | 构造函数，`n` 为预计存储的元素数量，使用默认填充比率 (`p=0.5`) 和默认误报率 (`e=0.01`) 初始化 Bloom 过滤器。 |
-| `public func SetHasher(h: (Array<Byte>) -> UInt64) : Unit` | 设置用户自定义的哈希函数，用于生成位数组的位置。 |
-| `public func Reset() : Unit` | 重置 Bloom 过滤器，清空所有内容并重新计算参数。 |
-| `public func SetErrorProbability(e: Float64) : Unit` | 设置新的误报率，并重置过滤器。 |
-| `public func EstimatedFillRatio() : Float64` | 估算 Bloom 过滤器的理论填充率。 |
-| `public func FillRatio() : Float64` | 获取 Bloom 过滤器的实际填充率。 |
-| `public func Add(item: Array<Byte>) : Unit` | 向 Bloom 过滤器中添加一个元素 `item`。 |
-| `public func Check(item: Array<Byte>) : Bool` | 检查元素 `item` 是否可能存在于 Bloom 过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
-| `public func Count() : UInt64` | 返回已插入的元素数量。 |
-| `public func PrintStats() : Unit` | 打印当前 Bloom 过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
+| `public func setHasher(h: (Array<Byte>) -> UInt64) : Unit` | 设置用户自定义的哈希函数，用于生成位数组的位置。 |
+| `public func reset() : Unit` | 重置 Bloom 过滤器，清空所有内容并重新计算参数。 |
+| `public func setErrorProbability(e: Float64) : Unit` | 设置新的误报率，并重置过滤器。 |
+| `public func estimatedFillRatio() : Float64` | 估算 Bloom 过滤器的理论填充率。 |
+| `public func fillRatio() : Float64` | 获取 Bloom 过滤器的实际填充率。 |
+| `public func add(item: Array<Byte>) : Unit` | 向 Bloom 过滤器中添加一个元素 `item`。 |
+| `public func check(item: Array<Byte>) : Bool` | 检查元素 `item` 是否可能存在于 Bloom 过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
+| `public func count() : UInt64` | 返回已插入的元素数量。 |
+| `public func printStats() : Unit` | 打印当前 Bloom 过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
+| `public static func valToBinaryFromPudge<T>(value: T) where T <: Serializable<T>` | 调用外部接口将对象通过序列化的方式，转化为字节数组。转化的对象必须要实现Serializable接口。 |
 
 
 
@@ -69,6 +70,21 @@ cjpm build
 
 ### 功能示例
 
+#### 将可序列化对象转化为字节数组
+示例代码如下：
+```cangjie
+main() {
+	let a : Array<Byte> = StandardBloom.valToBinaryFromPudge<String>("我爱国家"),
+    let b : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int64>(1234567890),
+    let c : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int32>(123456),
+    let d : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int16>(1234),
+    let e : Array<Byte> = StandardBloom.valToBinaryFromPudge<Float64>(3.1415926535),
+    let f : Array<Byte> = StandardBloom.valToBinaryFromPudge<Float32>(2.0001234),
+    let g : Array<Byte> = StandardBloom.valToBinaryFromPudge<Float16>(1.618),
+    let h : Array<Byte> = StandardBloom.valToBinaryFromPudge<String>("🌟🌍🚀")
+}
+```
+
 #### 初始化Bloom过滤器并添加、检查元素
 示例代码如下：
 ```cangjie
@@ -77,138 +93,44 @@ main() {
     let bf = StandardBloom(n: 1000)
     
     // 将字符串 "Hello" 转换为字节数组并添加到 Bloom 过滤器中
-    let item: Array<Byte> = [72, 101, 108, 108, 111] // ASCII 码对应 'H', 'e', 'l', 'l', 'o'
-    bf.Add(item)
+     // ASCII 码对应 'H', 'e', 'l', 'l', 'o'
+    let item: Array<Byte> = [72, 101, 108, 108, 111]
+    bf.add(item)
     
     // 检查 "Hello" 是否存在于 Bloom 过滤器中
-    let exists = bf.Check(item)
+    let exists = bf.check(item)
     print(exists) // 输出: true
 }
 ```
-#### 自定义哈希函数
-示例代码如下：
-```cangjie
-// CRC64 Hash函数
-func CRC64Hash(data: Array<Byte>) : UInt64 {
-    // CRC64多项式
-    const poly: UInt64 = 0xC96C5795D7870F42
-    // 初始化CRC值
-    var crc: UInt64 = 0xFFFFFFFFFFFFFFFF  
 
-    // 逐字节计算CRC
-    for (b in data) {
-        crc ^= UInt64(b)  
-        // 处理每个字节的8位
-        for (i in 0..7) {
-            if ((crc & 1) != 0) {
-                crc = (crc >> 1) ^ poly  
-            } else {
-                crc = crc >> 1  
-            }
-        }
-    }
-    // 返回无符号的CRC值
-    return crc
-}
-
-main() {
-    // 初始化 Bloom 过滤器，预计存储 1000 个元素
-    let bf = StandardBloom(n: 1000)
-    
-    // 设置自定义的 CRC32 哈希函数
-    bf.SetHasher(calculateCRC32)
-    
-    // 添加元素到 Bloom 过滤器
-    let item: Array<Byte> = [72, 101, 108, 108, 111] // "Hello"
-    bf.Add(item)
-    
-    // 检查元素是否存在
-    let exists = bf.Check(item)
-    print(exists) // 输出: true
-}
-```
-#### 自定义初始化参数
+#### 初始化Bloom过滤器时，自定义初始化参数
 示例代码如下：
 ```cangjie
 main() {
     // 初始化 Bloom 过滤器，预计存储 5000 个元素，误报率为 0.005，填充率为 0.6
     let bf = StandardBloom(n: 5000, e: 0.005, p: 0.6)
-    
-    // 添加和检查元素的操作同上
-    let item: Array<Byte> = [97, 98, 99] // ASCII 'a', 'b', 'c'
-    bf.Add(item)
-    
-    let exists = bf.Check(item)
-    print(exists) // 输出: true
 }
 ```
+
 #### 重置Bloom过滤器
 示例代码如下：
 ```cangjie
 main() {
     let bf = StandardBloom(n: 1000)
-    
-    // 添加元素
-    let item1: Array<Byte> = [100, 101, 102] // "def"
-    bf.Add(item1)
-    
-    // 检查元素
-    let exists1 = bf.Check(item1)
-    print(exists1) // 输出: true
-    
     // 重置 Bloom 过滤器
-    bf.Reset()
-    
-    // 检查元素是否仍然存在
-    let exists2 = bf.Check(item1)
-    print(exists2) // 输出: false
+    bf.reset()
 }
 ```
+
 #### 设置新误报率并重置过滤器
 示例代码如下：
 ```cangjie
 main() {
     let bf = StandardBloom(n: 1000)
-    
-    // 添加元素
-    let item: Array<Byte> = [103, 104, 105] // "ghi"
-    bf.Add(item)
-    
-    // 检查元素
-    let exists1 = bf.Check(item)
-    print(exists1) // 输出: true
-    
     // 设置新的误报率
-    bf.SetErrorProbability(0.001)
-    
-    // 检查元素是否仍然存在
-    let exists2 = bf.Check(item)
-    print(exists2) // 输出: true
+    bf.setErrorProbability(0.001)
 }
 ```
-#### 性能优化方法
-示例代码如下：
-```cangjie
-main() {
-    let bf = StandardBloom(n: 1000)
-    
-    // 添加元素
-    let item: Array<Byte> = [103, 104, 105] // "ghi"
-    bf.Add(item)
-    
-    // 检查元素
-    let exists1 = bf.Check(item)
-    print(exists1) // 输出: true
-    
-    // 设置新的误报率
-    bf.SetErrorProbability(0.001)
-    
-    // 检查元素是否仍然存在
-    let exists2 = bf.Check(item)
-    print(exists2) // 输出: true
-}
-```
-
 
 ## 约束与限制
 环境限制：无
