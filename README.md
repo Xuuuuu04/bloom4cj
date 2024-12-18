@@ -17,13 +17,13 @@
 ### 项目特性
 
 - 分区结构：将位数组分为多个分区，提高内存和查找效率。
-- 灵活的哈希函数：支持自定义哈希函数，未定义时使用默认哈希函数。
-- 高效的存储与查找：使用位数组和多个哈希函数实现高效的查找操作。
-- 本项目迁移自[zentures](https://github.com/zentures/bloom)。
+- 灵活的哈希函数：支持自定义哈希函数，未定义时使用默认哈希函数（FNV-1a）。
+- 高效的存储与查找：利用位数组和多个哈希函数实现快速的插入和查询操作。
+- 本项目迁移自 [zentures](https://github.com/zentures/bloom)
 
 ### 项目计划
 
-- 2024/12/6 v0.57.3发布
+- 2024/12/18 v0.57.3发布
 
 ##  项目架构
 
@@ -47,15 +47,17 @@
 
 | 名称 | 用途 |
 | --- | --- |
-| `public init(n: Int64)` | 构造函数，`n` 为预计存储的元素数量，使用默认填充比率 (`p=0.5`) 和默认误报率 (`e=0.001`) 初始化bloom过滤器。 |
-| `public init(n: Int64, e: Float64)` | 重载构造函数，`n` 为预计存储的元素数量，`e` 为自定义误报率，使用默认填充比率 (`p=0.5`) 初始化bloom过滤器。 |
-| `public init(n: Int64, e: Float64, p: Float64)` | 重载构造函数，`n` 为预计存储的元素数量，`e` 为自定义误报率，`p` 为自定义填充比率，初始化bloom过滤器。 |
-| `public func reset() : Bool` | 重置bloom过滤器，清空所有内容并保持原有大小。返回 `true` 表示重置成功。 |
-| `public func count() : Int64` | 返回已插入的元素数量。 |
-| `public func printStats() : Unit` | 打印当前bloom过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
-| `public func setHashFunction(function: (String) -> Int64)` | 设置用户自定义的哈希函数，用于生成位数组的位置。 |
-| `public func add(key: String) : Unit` | 向bloom过滤器中添加一个元素 `key`。 |
-| `public func check(key: String) : Bool` | 检查元素 `key` 是否可能存在于bloom过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
+| `public init(n: UInt64)` | 构造函数，`n` 为预计存储的元素数量，使用默认填充比率 (`p=0.5`) 和默认误报率 (`e=0.01`) 初始化 Bloom 过滤器。 |
+| `public func SetHasher(h: (Array<Byte>) -> UInt64) : Unit` | 设置用户自定义的哈希函数，用于生成位数组的位置。 |
+| `public func Reset() : Unit` | 重置 Bloom 过滤器，清空所有内容并重新计算参数。 |
+| `public func SetErrorProbability(e: Float64) : Unit` | 设置新的误报率，并重置过滤器。 |
+| `public func EstimatedFillRatio() : Float64` | 估算 Bloom 过滤器的理论填充率。 |
+| `public func FillRatio() : Float64` | 获取 Bloom 过滤器的实际填充率。 |
+| `public func Add(item: Array<Byte>) : Unit` | 向 Bloom 过滤器中添加一个元素 `item`。 |
+| `public func Check(item: Array<Byte>) : Bool` | 检查元素 `item` 是否可能存在于 Bloom 过滤器中。返回 `true` 表示可能存在，`false` 表示肯定不存在。 |
+| `public func Count() : UInt64` | 返回已插入的元素数量。 |
+| `public func PrintStats() : Unit` | 打印当前 Bloom 过滤器的统计信息，包括位数组大小 (`m`)、预计元素数 (`n`)、哈希函数数量 (`k`)、分片大小 (`s`)、填充比率 (`p`)、误报率 (`e`) 以及已设置的位数和其比例。 |
+
 
 
 ## 使用说明
@@ -72,43 +74,138 @@ cjpm build
 示例代码如下：
 ```cangjie
 main() {
-	let bf = StandardBloom(1000)
-    bf.add("Hello")
-    bf.check("Hello")
+    // 初始化 Bloom 过滤器，预计存储 1000 个元素
+    let bf = StandardBloom(n: 1000)
+    
+    // 将字符串 "Hello" 转换为字节数组并添加到 Bloom 过滤器中
+    let item: Array<Byte> = [72, 101, 108, 108, 111] // ASCII 码对应 'H', 'e', 'l', 'l', 'o'
+    bf.Add(item)
+    
+    // 检查 "Hello" 是否存在于 Bloom 过滤器中
+    let exists = bf.Check(item)
+    print(exists) // 输出: true
 }
 ```
 #### 自定义哈希函数
 示例代码如下：
 ```cangjie
-// CRC32哈希函数
-func calculateCRC32(data: String){
-    let CRC32_POLYNOMIAL = 0xEDB88320
-    let CRC32_TABLE= Array<Int64>(256,repeat:0)
+// CRC64 Hash函数
+func CRC64Hash(data: Array<Byte>) : UInt64 {
+    // CRC64多项式
+    const poly: UInt64 = 0xC96C5795D7870F42
+    // 初始化CRC值
+    var crc: UInt64 = 0xFFFFFFFFFFFFFFFF  
 
-    for(i in 0..256){
-        var crc = i
-        for(j in 0..8){
-            if((crc & 1) == 1){
-                crc = (crc >> 1) ^ CRC32_POLYNOMIAL
-            }else {
-                crc >>= 1
+    // 逐字节计算CRC
+    for (b in data) {
+        crc ^= UInt64(b)  
+        // 处理每个字节的8位
+        for (i in 0..7) {
+            if ((crc & 1) != 0) {
+                crc = (crc >> 1) ^ poly  
+            } else {
+                crc = crc >> 1  
             }
         }
-        CRC32_TABLE[i] = crc
     }
-
-    var crc = 0xFFFFFFFF    // CRC32初始值
-    for(b in data){
-        let tableIndex = ((crc) & 0xFF) ^ (Int64(b & 0xFF))
-        crc = (CRC32_TABLE[tableIndex] ^ (crc >> 8)) & 0xFFFFFFFF
-    }
-
-    return crc ^ 0xFFFFFFFF
+    // 返回无符号的CRC值
+    return crc
 }
-
 main() {
-	let bf = StandardBloom(1000)
-    bf.setHashFunction(calculateCRC32)
+    // 初始化 Bloom 过滤器，预计存储 1000 个元素
+    let bf = StandardBloom(n: 1000)
+    
+    // 设置自定义的 CRC32 哈希函数
+    bf.SetHasher(calculateCRC32)
+    
+    // 添加元素到 Bloom 过滤器
+    let item: Array<Byte> = [72, 101, 108, 108, 111] // "Hello"
+    bf.Add(item)
+    
+    // 检查元素是否存在
+    let exists = bf.Check(item)
+    print(exists) // 输出: true
+}
+```
+#### 自定义初始化参数
+示例代码如下：
+```cangjie
+main() {
+    // 初始化 Bloom 过滤器，预计存储 5000 个元素，误报率为 0.005，填充率为 0.6
+    let bf = StandardBloom(n: 5000, e: 0.005, p: 0.6)
+    
+    // 添加和检查元素的操作同上
+    let item: Array<Byte> = [97, 98, 99] // ASCII 'a', 'b', 'c'
+    bf.Add(item)
+    
+    let exists = bf.Check(item)
+    print(exists) // 输出: true
+}
+```
+#### 重置Bloom过滤器
+示例代码如下：
+```cangjie
+main() {
+    let bf = StandardBloom(n: 1000)
+    
+    // 添加元素
+    let item1: Array<Byte> = [100, 101, 102] // "def"
+    bf.Add(item1)
+    
+    // 检查元素
+    let exists1 = bf.Check(item1)
+    print(exists1) // 输出: true
+    
+    // 重置 Bloom 过滤器
+    bf.Reset()
+    
+    // 检查元素是否仍然存在
+    let exists2 = bf.Check(item1)
+    print(exists2) // 输出: false
+}
+```
+#### 设置新误报率并重置过滤器
+示例代码如下：
+```cangjie
+main() {
+    let bf = StandardBloom(n: 1000)
+    
+    // 添加元素
+    let item: Array<Byte> = [103, 104, 105] // "ghi"
+    bf.Add(item)
+    
+    // 检查元素
+    let exists1 = bf.Check(item)
+    print(exists1) // 输出: true
+    
+    // 设置新的误报率
+    bf.SetErrorProbability(0.001)
+    
+    // 检查元素是否仍然存在
+    let exists2 = bf.Check(item)
+    print(exists2) // 输出: true
+}
+```
+#### 性能优化方法
+示例代码如下：
+```cangjie
+main() {
+    let bf = StandardBloom(n: 1000)
+    
+    // 添加元素
+    let item: Array<Byte> = [103, 104, 105] // "ghi"
+    bf.Add(item)
+    
+    // 检查元素
+    let exists1 = bf.Check(item)
+    print(exists1) // 输出: true
+    
+    // 设置新的误报率
+    bf.SetErrorProbability(0.001)
+    
+    // 检查元素是否仍然存在
+    let exists2 = bf.Check(item)
+    print(exists2) // 输出: true
 }
 ```
 
