@@ -74,7 +74,7 @@ cjpm build
 示例代码如下：
 ```cangjie
 main() {
-	let a : Array<Byte> = StandardBloom.valToBinaryFromPudge<String>("我爱国家"),
+	let a : Array<Byte> = StandardBloom.valToBinaryFromPudge<String>("我爱cangjie"),
     let b : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int64>(1234567890),
     let c : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int32>(123456),
     let d : Array<Byte> = StandardBloom.valToBinaryFromPudge<Int16>(1234),
