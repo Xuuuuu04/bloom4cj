@@ -117,19 +117,19 @@ public class Bloom4cjTest{
 
         // 将web1中的每个单词添加到Bloom过滤器中
         for (word in web1) {
-            bloom.Add(word)
+            bloom.add(word)
         }
 
         // 检查web1中的每个单词是否存在于Bloom过滤器中
         for (word in web1) {
-            if (!bloom.Check(word)) { 
+            if (!bloom.check(word)) { 
                 fn++
             }
         }
 
         // 检查web2中的每个单词是否错误地存在于Bloom过滤器中
         for (word in web2) {
-            if (bloom.Check(word)) { 
+            if (bloom.check(word)) { 
                 fp++
             }
         }
@@ -150,23 +150,23 @@ public class Bloom4cjTest{
 
         // 初始化Bloom过滤器，m=100，使用CRC64 Hash
         var bloom : StandardBloom = StandardBloom(100)
-        bloom.SetHasher(CRC64Hash)
+        bloom.setHasher(CRC64Hash)
 
         // 将web1中的每个单词添加到Bloom过滤器中
         for (word in web1) {
-            bloom.Add(word)
+            bloom.add(word)
         }
 
         // 检查web1中的每个单词是否存在于Bloom过滤器中
         for (word in web1) {
-            if (!bloom.Check(word)) { 
+            if (!bloom.check(word)) { 
                 fn++
             }
         }
 
         // 检查web2中的每个单词是否错误地存在于Bloom过滤器中
         for (word in web2) {
-            if (bloom.Check(word)) { 
+            if (bloom.check(word)) { 
                 fp++
             }
         }
@@ -190,19 +190,19 @@ public class Bloom4cjTest{
 
         // 将web1中的每个单词添加到Bloom过滤器中
         for (word in web3) {
-            bloom.Add(word)
+            bloom.add(word)
         }
 
         // 检查web1中的每个单词是否存在于Bloom过滤器中
         for (word in web3) {
-            if (!bloom.Check(word)) { 
+            if (!bloom.check(word)) { 
                 fn++
             }
         }
 
         // 检查web2中的每个单词是否错误地存在于Bloom过滤器中
         for (word in web4) {
-            if (bloom.Check(word)) { 
+            if (bloom.check(word)) { 
                 fp++
             }
         }
@@ -223,23 +223,23 @@ public class Bloom4cjTest{
 
         // 初始化Bloom过滤器，m=100，使用CRC64 Hash
         var bloom : StandardBloom = StandardBloom(100)
-        bloom.SetHasher(CRC64Hash)
+        bloom.setHasher(CRC64Hash)
 
         // 将web1中的每个单词添加到Bloom过滤器中
         for (word in web3) {
-            bloom.Add(word)
+            bloom.add(word)
         }
 
         // 检查web1中的每个单词是否存在于Bloom过滤器中
         for (word in web3) {
-            if (!bloom.Check(word)) { 
+            if (!bloom.check(word)) { 
                 fn++
             }
         }
 
         // 检查web2中的每个单词是否错误地存在于Bloom过滤器中
         for (word in web4) {
-            if (bloom.Check(word)) { 
+            if (bloom.check(word)) { 
                 fp++
             }
         }
