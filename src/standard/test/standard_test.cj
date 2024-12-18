@@ -1,9 +1,8 @@
-package bloom4cj.standard
+package bloom4cj.standard.test
 import std.unittest.*
 import std.unittest.testmacro.*
-import bloom4cj.*
+import bloom4cj.standard.*
 import std.core.Exception
-import std.math
 
 @Test
 public class Bloom4cjTest{

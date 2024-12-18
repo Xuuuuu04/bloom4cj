@@ -1,5 +1,5 @@
 package bloom4cj
-import std.math
+import std.math.*
 
 // 实现Bloom的基本操作接口
 interface Bloom {
@@ -32,21 +32,17 @@ interface Bloom {
     mut func SetErrorProbability(e : Float64) : Unit
 }
 
-// K(e float64) 根据错误率 e 计算哈希次数 k = ceil(log2(1/e))。
-// 当错误率越低时 1/e 越大，对数值越高，从而 k 值越大。
+// 根据错误率 e 计算哈希次数 k
 func K(e : Float64) : UInt64 {
-	return UInt64(math.ceil(math.log2(1.0 / e)))
+	return UInt64(ceil(log2(1.0 / e)))
 }
 
-// M(n uint, p, e float64) 根据元素数量 n、填充率 p 和错误率 e 来计算需要的位数 m。
-// 公式：m ≈ n / ((log(p)*log(1-p))/abs(log e))
-// 该公式根据相关论文和文献推导而来，用于确定位数组的最佳大小。
+// 根据元素数量 n、填充率 p 和错误率 e 来计算需要的位数 m。
 func M(n : UInt64, p : Float64 , e : Float64) : UInt64 {
-	return UInt64(math.ceil(Float64(n) / ((math.log(p) * math.log(1.0-p)) / math.abs(math.log(e)))))
+	return UInt64(ceil(Float64(n) / ((log(p) * log(1.0-p)) / abs(log(e)))))
 }
 
-// S(m, k uint) 计算每个分片的大小 s，即 s = ceil(m/k)。
-// 如果使用分区式Bloom过滤器（partitioned bloom filter），每个分片都会有 s 个位。
+// 计算每个分片的大小 s
 func S(m : UInt64 , k : UInt64) : UInt64 {
-	return UInt64(math.ceil(Float64(m) / Float64(k)))
+	return UInt64(ceil(Float64(m) / Float64(k)))
 }

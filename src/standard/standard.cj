@@ -1,11 +1,11 @@
 package bloom4cj.standard
-import std.math
+import std.math.*
 import std.format.*
 import std.binary.*
-import bloom4cj.*
-import std.core.Exception
 import serialization.serialization.*
+import bloom4cj.*
 import pudge4cj.*
+import std.core.Exception
 
 // 标准Bloom过滤器实现
 struct StandardBloom <: Bloom {
@@ -79,7 +79,7 @@ struct StandardBloom <: Bloom {
     
     // 估算Bloom过滤器的理论填充率
     public func EstimatedFillRatio() : Float64 {
-        return 1.0 - math.exp((-Float64(this.c) * Float64(this.k)) / Float64(this.m))
+        return 1.0 - exp((-Float64(this.c) * Float64(this.k)) / Float64(this.m))
     }
     
     // 获取Bloom过滤器的实际填充率
