@@ -91,26 +91,24 @@ main() {
 示例代码如下：
 ```cangjie
 main() {
-    // 初始化 Bloom 过滤器，预计存储 1000 个元素
-    let bf = StandardBloom(n: 1000)
+    // 初始化Bloom过滤器，预计添加100个元素，误报率0.01
+    var bloom : StandardBloom = StandardBloom(100)
     
-    // 将字符串 "Hello" 转换为字节数组并添加到 Bloom 过滤器中
-     // ASCII 码对应 'H', 'e', 'l', 'l', 'o'
-    let item: Array<Byte> = [72, 101, 108, 108, 111]
-    bf.add(item)
-    
-    // 检查 "Hello" 是否存在于 Bloom 过滤器中
-    let exists = bf.check(item)
-    print(exists) // 输出: true
-}
-```
+    // 将字符串 "我“，“爱”，“CangJie" 转换为字节数组，逐个添加到 Bloom 过滤器中
+    var wordList: Array<Array<Byte>> = [
+        "我".toArray(),
+        "爱".toArray(),
+        "CangJie".toArray()
+    ]
 
-#### 初始化Bloom过滤器时，自定义初始化参数
-示例代码如下：
-```cangjie
-main() {
-    // 初始化 Bloom 过滤器，预计存储 5000 个元素，误报率为 0.005，填充率为 0.6
-    let bf = StandardBloom(n: 5000, e: 0.005, p: 0.6)
+    // 将wordList中的每个单词添加到Bloom过滤器中
+    for (word in wordList) {
+        bloom.add(word)
+    }
+    
+    // 检查 "CangJie" 是否存在于 Bloom 过滤器中
+    let exists : Bool = bloom.check("CangJie".toArray())
+    print(exists) // 输出: true
 }
 ```
 
@@ -118,9 +116,9 @@ main() {
 示例代码如下：
 ```cangjie
 main() {
-    let bf = StandardBloom(n: 1000)
+    var bloom : StandardBloom = StandardBloom(1000)
     // 重置 Bloom 过滤器
-    bf.reset()
+    bloom.reset()
 }
 ```
 
@@ -128,9 +126,9 @@ main() {
 示例代码如下：
 ```cangjie
 main() {
-    let bf = StandardBloom(n: 1000)
-    // 设置新的误报率
-    bf.setErrorProbability(0.001)
+    var bloom : StandardBloom = StandardBloom(1000)
+    // 设置新的误报率并自动重置过滤器
+    bloom.setErrorProbability(0.001)
 }
 ```
 
