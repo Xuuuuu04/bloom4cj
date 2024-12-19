@@ -8,7 +8,7 @@ import pudge4cj.*
 import std.core.Exception
 
 // 标准Bloom过滤器实现
-struct StandardBloom <: Bloom {
+public struct StandardBloom <: Bloom {
     
     // 用于生成Hash值的Hash模块
     private var h : HashModule = HashModule()
@@ -43,22 +43,6 @@ struct StandardBloom <: Bloom {
     // 初始化Bloom过滤器
     public init(n : UInt64) {
         this.n = n
-        this.c = 0
-        this.e = 0.01
-        this.p = 0.5
-        this.m = M(n, p, e)
-        this.k = K(e)
-        this.s = S(m, k)
-        this.bs = Array<UInt64>(Int64(k), repeat: 0)
-        this.b = BitSet(m)
-    }
-
-    // 通过自定义参数初始化Bloom过滤器
-    public init(n : UInt64 , e : Float64 , p : Float64) {
-        this.n = n
-        this.c = 0
-        this.e = e
-        this.p = p
         this.m = M(n, p, e)
         this.k = K(e)
         this.s = S(m, k)
@@ -84,7 +68,7 @@ struct StandardBloom <: Bloom {
     // 设置新的误报率并重置过滤器
     public mut func setErrorProbability(e : Float64) : Unit {
         if (e <= 0.0 || e >= 1.0) {
-            throw IllegalArgumentException("Error probability (e) must be between 0 and 1.")
+            throw IllegalArgumentException("Error probability e must be between 0 and 1.")
         }
         this.e = e
         this.reset()
@@ -108,7 +92,7 @@ struct StandardBloom <: Bloom {
         for (i in 0..this.k) {
             let index = this.bs[Int64(i)]
             if (index >= this.m) {
-                throw IllegalArgumentException("Bit index $index is out of bounds (m = $m).")
+                throw IllegalArgumentException("Bit index ${index} is out of bounds (m = ${m}).")
             }
             this.b.funcSet(index)
         }
@@ -124,7 +108,7 @@ struct StandardBloom <: Bloom {
         for (i in 0..this.k) {
             let index = this.bs[Int64(i)]
             if (index >= this.m) {
-                throw IllegalArgumentException("Bit index $index is out of bounds (m = $m).")
+                throw IllegalArgumentException("Bit index ${index} is out of bounds (m = ${m}).")
             }
             if (!this.b.test(index)) {
                 return false
@@ -154,7 +138,7 @@ struct StandardBloom <: Bloom {
         
         // 确保Hash结果长度足够
         if (s.size < 8) {
-            throw IllegalArgumentException("Hash result size is $s.size, expected at least 8 bytes.")
+            throw IllegalArgumentException("Hash result size is ${s.size}, expected at least 8 bytes.")
         }
         
         // 从Hash结果中提取两个32位整数a和b
@@ -177,19 +161,6 @@ struct StandardBloom <: Bloom {
         }
     }
 
-    // 将4字节数组转换为大端序
-    private func bigEndianSort32(input : Array<Byte>) : Array<Byte> {
-        if (input.size != 4) {
-            throw IllegalArgumentException("Size of Array is $input.size, expected 4.")
-        }
-        
-        var bytes : Array<Byte> = Array<Byte>(4, repeat : 0)
-        for (i in 0..3) {
-            bytes[i] = input[3 - i]
-        }
-        return bytes
-    }
-
     // 将对象转化为 Array<Byte>
     public static func valToBinaryFromPudge<T>(value: T) where T <: Serializable<T>{
         return Db.valToBinary<T>(value)
@@ -197,7 +168,7 @@ struct StandardBloom <: Bloom {
 }
 
 // BitSet 是一个位集
-struct BitSet {
+private struct BitSet {
     
     // 位集的总位数
     private var length : UInt64 = 0
@@ -248,19 +219,19 @@ struct BitSet {
     // 设置第i位为1
     public mut func funcSet(i : UInt64) : Unit {
         if (i >= this.length) {
-            throw IllegalArgumentException("Index $i is out of bounds. Current BitSet length is $length.")
+            throw IllegalArgumentException("Index ${i} is out of bounds. Current BitSet length is ${length}.")
         }
         let wordIndex = i >> 6
         let bitIndex = i & 63
         if (wordIndex >= UInt64(this.set.size)) {
-            throw IllegalArgumentException("Word index $wordIndex is out of bounds.")
+            throw IllegalArgumentException("Word index ${wordIndex} is out of bounds.")
         }
         this.set[Int64(wordIndex)] |= (1 << bitIndex)
     }
 }
 
 // Hash模块，包含Hash函数的实现
-struct HashModule {
+private struct HashModule {
     
     // 存储要Hash的数据
     private var buffer : Array<Byte> = Array<Byte>(0, repeat : 0)
@@ -269,7 +240,7 @@ struct HashModule {
     private var hashValue : UInt64 = 0
     
     // 当前使用的Hash函数，默认为SetcalFNV1aHash
-    private var hashFunc : (Array<Byte>)->UInt64 = {x => 0}
+    private var hashFunc : (Array<Byte>)->UInt64 = {_ => 0}
 
     // 初始化Hash模块
     public init() {
@@ -303,20 +274,7 @@ struct HashModule {
         }
         return sumBytes
     }
-    
-    // 将8字节数组转换为大端序
-    public func bigEndianSort64(input : Array<Byte>) : Array<Byte> {
-        if (input.size != 8) {
-            throw IllegalArgumentException("Size of Array is $input.size, expected 8.")
-        }
-        
-        var bytes : Array<Byte> = Array<Byte>(8, repeat: 0)
-        for (i in 0..7) {
-            bytes[i] = input[7 - i]
-        }
-        return bytes
-    }
-    
+
     // 计算FNV-1a 64位Hash值
     public func calSetcalFNV1aHash(data: Array<Byte>) : UInt64 {
         const offset64: UInt64 = 14695981039346656037
