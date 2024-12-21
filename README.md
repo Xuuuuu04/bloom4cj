@@ -144,6 +144,6 @@ main() {
 
 本项目committer：[@mumu_xsy](https://gitcode.com/mumu_xsy)/[@leaveWhite088](https://gitcode.com/leaveWhite9088)
 
-This project is supervised by [@zhangyin——gitcode](https://gitcode.com/zhangyin_gitcode) (HUAWEI Developer Advocate).
+This project is supervised by [@zhangyin_gitcode](https://gitcode.com/zhangyin_gitcode) (HUAWEI Developer Advocate).
 
 ![DevAdvocate](https://raw.gitcode.com/SIGCANGJIE/homepage/attachment/uploads/9b648c07-efc2-4eb3-b02f-eab18c77beea/devadvocate.png)
