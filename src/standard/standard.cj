@@ -9,7 +9,7 @@ import pudge4cj.*
 import std.core.Exception
 
 // 标准Bloom过滤器实现
-public struct StandardBloom <: Bloom {
+public class StandardBloom <: Bloom {
 
     // 用于生成Hash值的Hash模块
     private var h: HashModule = HashModule()
@@ -52,12 +52,12 @@ public struct StandardBloom <: Bloom {
     }
 
     // 设置Bloom过滤器使用的Hash函数
-    public mut func setHasher(h: (Array<Byte>) -> UInt64): Unit {
+    public func setHasher(h: (Array<Byte>) -> UInt64): Unit {
         this.h.setHashFunction(h)
     }
 
     // 重置Bloom过滤器并重新计算参数
-    public mut func reset(): Unit {
+    public func reset(): Unit {
         this.k = K(this.e)
         this.m = M(this.n, this.p, this.e)
         this.s = S(m, k)
@@ -67,7 +67,7 @@ public struct StandardBloom <: Bloom {
     }
 
     // 设置新的误报率并重置过滤器
-    public mut func setErrorProbability(e: Float64): Unit {
+    public func setErrorProbability(e: Float64): Unit {
         if (e <= 0.0 || e >= 1.0) {
             throw IllegalArgumentException("Error probability e must be between 0 and 1.")
         }
@@ -87,7 +87,7 @@ public struct StandardBloom <: Bloom {
     }
 
     // 添加元素到Bloom过滤器
-    public mut func add(item: Array<Byte>): Unit {
+    public func add(item: Array<Byte>): Unit {
         this.bits(item)
 
         // 设置对应的位
@@ -104,7 +104,7 @@ public struct StandardBloom <: Bloom {
     }
 
     // 检查元素是否可能存在于Bloom过滤器中
-    public mut func check(item: Array<Byte>): Bool {
+    public func check(item: Array<Byte>): Bool {
         this.bits(item)
 
         // 检查所有对应的位是否都被设置
@@ -137,7 +137,7 @@ public struct StandardBloom <: Bloom {
     }
 
     // 根据元素计算k个位索引
-    private mut func bits(item: Array<Byte>): Unit {
+    private func bits(item: Array<Byte>): Unit {
         this.h.reset()
         this.h.Write(item)
         let s = this.h.sum()
@@ -174,7 +174,7 @@ public struct StandardBloom <: Bloom {
 }
 
 // BitSet 是一个位集
-private struct BitSet {
+private class BitSet {
 
     // 位集的总位数
     private var _length: UInt64 = 0
@@ -225,7 +225,7 @@ private struct BitSet {
     }
 
     // 设置第i位为1
-    public mut func set(i: UInt64): Unit {
+    public func set(i: UInt64): Unit {
         if (i >= this._length) {
             throw IllegalArgumentException("Index ${i} is out of bounds. Current BitSet length is ${_length}.")
         }
@@ -241,7 +241,7 @@ private struct BitSet {
 }
 
 // Hash模块，包含Hash函数的实现
-private struct HashModule {
+private class HashModule {
 
     // 存储要Hash的数据
     private var buffer: Array<Byte> = Array<Byte>(0, repeat: 0)
@@ -260,18 +260,18 @@ private struct HashModule {
     }
 
     // 重置Hash模块状态
-    public mut func reset(): Unit {
+    public func reset(): Unit {
         this.buffer = Array<Byte>(0, repeat: 0)
         this.hashValue = 0
     }
 
     // 写入数据到Hash模块
-    public mut func Write(data: Array<Byte>): Unit {
+    public func Write(data: Array<Byte>): Unit {
         this.buffer = data
     }
 
     // 计算Hash值并返回大端序字节数组
-    public mut func sum(): Array<Byte> {
+    public func sum(): Array<Byte> {
         if (this.buffer.size == 0) {
             throw IllegalArgumentException("Buffer is empty. Cannot compute hash.")
         }
@@ -305,7 +305,7 @@ private struct HashModule {
     }
 
     // 设置新的Hash函数
-    public mut func setHashFunction(newHashFunc: (Array<Byte>) -> UInt64): Unit {
+    public func setHashFunction(newHashFunc: (Array<Byte>) -> UInt64): Unit {
         this.hashFunc = newHashFunc
     }
 }

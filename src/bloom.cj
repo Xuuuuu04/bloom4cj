@@ -5,10 +5,10 @@ import std.math.*
 public interface Bloom {
     
     // 添加一个元素到Bloom过滤器
-    mut func add(item : Array<Byte>) : Unit
+    func add(item : Array<Byte>) : Unit
     
     // 检查一个元素是否可能存在于Bloom过滤器中，若可能返回 true，否则返回 false
-    mut func check(item : Array<Byte>) : Bool
+    func check(item : Array<Byte>) : Bool
     
     // 返回已添加的元素数量
     func count() : UInt64
@@ -17,10 +17,10 @@ public interface Bloom {
     func printStats() : Unit
     
     // 设置Bloom过滤器使用的Hash函数
-    mut func setHasher(h: (Array<Byte>) -> UInt64) : Unit
+    func setHasher(h: (Array<Byte>) -> UInt64) : Unit
     
     // 重置Bloom过滤器到初始状态
-    mut func reset() : Unit
+    func reset() : Unit
     
     // 返回Bloom过滤器的实际填充率，即已设置位的比例
     func fillRatio() : Float64
@@ -29,7 +29,7 @@ public interface Bloom {
     func estimatedFillRatio() : Float64
     
     // 设置Bloom过滤器的错误率参数
-    mut func setErrorProbability(e : Float64) : Unit
+    func setErrorProbability(e : Float64) : Unit
 }
 
 // 根据错误率 e 计算哈希次数 k
