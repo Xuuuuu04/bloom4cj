@@ -2,7 +2,7 @@ package bloom4cj
 import std.math.*
 
 // 实现Bloom的基本操作接口
-interface Bloom {
+public interface Bloom {
     
     // 添加一个元素到Bloom过滤器
     mut func add(item : Array<Byte>) : Unit

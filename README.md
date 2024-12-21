@@ -7,12 +7,12 @@
 <p align="center">
 <img alt="" src="https://img.shields.io/badge/release-v1.0.0-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/cjc-v0.57.3-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/cjcov-0.0%25-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/state-孵化-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/domain-HOS/Cloud-brightgreen" style="display: inline-block;" />
 </p>
 
 ## 介绍
+
+实现了一个标准的布隆过滤器（StandardBloom），用于高效地进行集合成员判断，基于哈希函数和位数组，通过设置多个哈希值来优化假阳性率。
 
 ### 项目特性
 
@@ -22,7 +22,7 @@
 
 ### 项目计划
 
-- 2024/12/18 v0.57.3发布
+- 2024/12/18 适配仓颉v0.57.3发布
 
 ##  项目架构
 
@@ -144,3 +144,6 @@ main() {
 
 本项目committer：[@mumu_xsy](https://gitcode.com/mumu_xsy)/[@leaveWhite088](https://gitcode.com/leaveWhite9088)
 
+This project is supervised by [@zhangyin——gitcode](https://gitcode.com/zhangyin_gitcode) (HUAWEI Developer Advocate).
+
+![DevAdvocate](https://raw.gitcode.com/SIGCANGJIE/homepage/attachment/uploads/9b648c07-efc2-4eb3-b02f-eab18c77beea/devadvocate.png)
