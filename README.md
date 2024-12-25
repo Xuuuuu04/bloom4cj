@@ -65,6 +65,7 @@
 ### 编译构建
 
 ```shell
+cjpm update
 cjpm build
 ```
 
