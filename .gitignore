@@ -5,3 +5,4 @@ target/
 cjpm.lock
 .idea/
 *.macrocall
+.DS_Store
