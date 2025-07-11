@@ -1,11 +1,9 @@
 package bloom4cj.standard
 
 import std.math.*
-import std.format.*
+// import std.format.*
 import std.binary.*
-import serialization.serialization.*
 import bloom4cj.*
-import pudge4cj.*
 import std.core.Exception
 
 // 标准Bloom过滤器实现
@@ -129,11 +127,11 @@ public class StandardBloom <: Bloom {
     // 打印Bloom过滤器的统计信息
     public func printStats(): Unit {
         print(
-            "m = ${this.m}, n = ${this.n}, k = ${this.k}, s = ${this.s}, p = ${this.p.format(".2")}, e = ${this.e.format(".4")}\n"
+            "m = ${this.m}, n = ${this.n}, k = ${this.k}, s = ${this.s}, p = ${this.p}, e = ${this.e}\n"
         )
         print("Total items: ${this.c}\n")
         let cSet = this.b.count()
-        print("Total bits set: ${cSet} (${(Float64(cSet) / Float64(this.m) * 100.0).format(".2")})\n")
+        print("Total bits set: ${cSet} (${(Float64(cSet) / Float64(this.m) * 100.0)}%)\n")
     }
 
     // 根据元素计算k个位索引
@@ -167,9 +165,64 @@ public class StandardBloom <: Bloom {
         }
     }
 
-    // 将对象转化为 Array<Byte>
-    public static func valToBinaryFromPudge<T>(value: T) where T <: Serializable<T> {
-        return Db.valToBinary<T>(value)
+    // 将字符串转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: String): Array<Byte> {
+        let bytes = Array<Byte>(value.size, {i => UInt8(value[i])})
+        return bytes
+    }
+    
+    // 将Int64转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Int64): Array<Byte> {
+        var bytes = Array<Byte>(8, repeat: 0)
+        var v = value
+        for (i in 0..8) {
+            bytes[7 - i] = UInt8((v >> (i * 8)) & 0xFF)
+        }
+        return bytes
+    }
+    
+    // 将Int32转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Int32): Array<Byte> {
+        var bytes = Array<Byte>(4, repeat: 0)
+        var v = value
+        for (i in 0..4) {
+            bytes[3 - i] = UInt8((v >> (i * 8)) & 0xFF)
+        }
+        return bytes
+    }
+    
+    // 将Int16转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Int16): Array<Byte> {
+        var bytes = Array<Byte>(2, repeat: 0)
+        var v = value
+        for (i in 0..2) {
+            bytes[1 - i] = UInt8((v >> (i * 8)) & 0xFF)
+        }
+        return bytes
+    }
+    
+    // 将Float64转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Float64): Array<Byte> {
+        // 简单实现：转为字符串
+        let str = value.toString()
+        let bytes = Array<Byte>(str.size, {i => UInt8(str[i])})
+        return bytes
+    }
+    
+    // 将Float32转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Float32): Array<Byte> {
+        // 简单实现：转为字符串
+        let str = value.toString()
+        let bytes = Array<Byte>(str.size, {i => UInt8(str[i])})
+        return bytes
+    }
+    
+    // 将Float16转化为 Array<Byte>
+    public static func valToBinaryFromPudge(value: Float16): Array<Byte> {
+        // 简单实现：转为字符串
+        let str = value.toString()
+        let bytes = Array<Byte>(str.size, {i => UInt8(str[i])})
+        return bytes
     }
 }
 
@@ -289,9 +342,9 @@ private class HashModule {
     public func calFNV1aHash(data: Array<Byte>): UInt64 {
         const offset64: UInt64 = 14695981039346656037
         const prime64: UInt64 = 1099511628211
-        let seed: UInt64 = offset64
+        let _: UInt64 = offset64
 
-        var hash = seed
+        var hash = offset64
 
         for (b in data) {
             hash ^= UInt64(b)

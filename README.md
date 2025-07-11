@@ -133,7 +133,7 @@ main() {
 
 ## 约束与限制
 依赖项目：
-    [pudge4cj](https://gitcode.com/leaveWhite9088/pudge4cj/overview)
+    [simplekv](https://gitcode.com/leaveWhite9088/simplekv/overview)
     [@leaveWhite088](https://gitcode.com/leaveWhite9088)
 
 ## 开源协议

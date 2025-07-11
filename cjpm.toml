@@ -1,8 +1,7 @@
 [dependencies]
-pudge4cj = {git = "https://gitcode.com/leaveWhite9088/pudge4cj.git"}
 
 [package]
-  cjc-version = "0.57.3"
+  cjc-version = "1.0.0"
   compile-option = ""
   description = "nothing here"
   link-option = ""

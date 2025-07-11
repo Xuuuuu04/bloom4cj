@@ -3,57 +3,56 @@ import std.unittest.*
 import std.unittest.testmacro.*
 import bloom4cj.standard.*
 import std.core.Exception
-import pudge4cj.*
 
 @Test
 public class Bloom4cjTest{
     
-    // 采用pudge4cj中自定义的方法导入的多种类型的数据
+    // 采用simplekv中自定义的方法导入的多种类型的数据
     var web1: Array<Array<Byte>> = [
-        StandardBloom.valToBinaryFromPudge<String>("我爱国家"),
-        StandardBloom.valToBinaryFromPudge<Int64>(1234567890),
-        StandardBloom.valToBinaryFromPudge<Int32>(123456),
-        StandardBloom.valToBinaryFromPudge<Int16>(1234),
-        StandardBloom.valToBinaryFromPudge<Float64>(3.1415926535),
-        StandardBloom.valToBinaryFromPudge<Float32>(2.0001234),
-        StandardBloom.valToBinaryFromPudge<Float16>(1.618),
-        StandardBloom.valToBinaryFromPudge<String>("你好，世界！"),
-        StandardBloom.valToBinaryFromPudge<String>("Special@Character#123"),
-        StandardBloom.valToBinaryFromPudge<Int64>(-9876543210),
-        StandardBloom.valToBinaryFromPudge<String>("12345测试"),
-        StandardBloom.valToBinaryFromPudge<Int32>(-67890),
-        StandardBloom.valToBinaryFromPudge<Float32>(0.1234),
-        StandardBloom.valToBinaryFromPudge<String>("🌟🌍🚀"),
-        StandardBloom.valToBinaryFromPudge<String>("Python编程"),
-        StandardBloom.valToBinaryFromPudge<Float64>(6.02214076),
-        StandardBloom.valToBinaryFromPudge<Int16>(4321),
-        StandardBloom.valToBinaryFromPudge<Int32>(54321),
-        StandardBloom.valToBinaryFromPudge<String>("C++开发者的世界"),
-        StandardBloom.valToBinaryFromPudge<Float64>(1.414213562)
+        StandardBloom.valToBinaryFromPudge("我爱国家"),
+        StandardBloom.valToBinaryFromPudge(1234567890),
+        StandardBloom.valToBinaryFromPudge(123456),
+        StandardBloom.valToBinaryFromPudge(1234),
+        StandardBloom.valToBinaryFromPudge(3.1415926535),
+        StandardBloom.valToBinaryFromPudge(2.0001234),
+        StandardBloom.valToBinaryFromPudge(1.618),
+        StandardBloom.valToBinaryFromPudge("你好，世界！"),
+        StandardBloom.valToBinaryFromPudge("Special@Character#123"),
+        StandardBloom.valToBinaryFromPudge(-9876543210),
+        StandardBloom.valToBinaryFromPudge("12345测试"),
+        StandardBloom.valToBinaryFromPudge(-67890),
+        StandardBloom.valToBinaryFromPudge(0.1234),
+        StandardBloom.valToBinaryFromPudge("🌟🌍🚀"),
+        StandardBloom.valToBinaryFromPudge("Python编程"),
+        StandardBloom.valToBinaryFromPudge(6.02214076),
+        StandardBloom.valToBinaryFromPudge(4321),
+        StandardBloom.valToBinaryFromPudge(54321),
+        StandardBloom.valToBinaryFromPudge("C++开发者的世界"),
+        StandardBloom.valToBinaryFromPudge(1.414213562)
     ]
 
-    // 采用pudge4cj中自定义的方法导入的多种类型的数据
+    // 采用simplekv中自定义的方法导入的多种类型的数据
     var web2: Array<Array<Byte>> = [
-        StandardBloom.valToBinaryFromPudge<String>("欢迎来到编程世界"),
-        StandardBloom.valToBinaryFromPudge<Int64>(987654321098765432),
-        StandardBloom.valToBinaryFromPudge<Int32>(2147483647),
-        StandardBloom.valToBinaryFromPudge<Int16>(32000),
-        StandardBloom.valToBinaryFromPudge<Float64>(9.876543210987654),
-        StandardBloom.valToBinaryFromPudge<Float32>(0.0001234),
-        StandardBloom.valToBinaryFromPudge<Float16>(42.42),
-        StandardBloom.valToBinaryFromPudge<String>("编程真有趣！"),
-        StandardBloom.valToBinaryFromPudge<String>("特殊字符：~!@#%^&*()_+{}|:\"<>?"),
-        StandardBloom.valToBinaryFromPudge<Int64>(-123456789012345678),
-        StandardBloom.valToBinaryFromPudge<String>("Data#1234🔢"),
-        StandardBloom.valToBinaryFromPudge<Int32>(-2147483648),
-        StandardBloom.valToBinaryFromPudge<Float32>(3.14159),
-        StandardBloom.valToBinaryFromPudge<String>("💡💻🔧技术"),
-        StandardBloom.valToBinaryFromPudge<String>("Java开发者的荣耀"),
-        StandardBloom.valToBinaryFromPudge<Float64>(2.718281828),
-        StandardBloom.valToBinaryFromPudge<Int16>(5000),
-        StandardBloom.valToBinaryFromPudge<Int32>(-99999),
-        StandardBloom.valToBinaryFromPudge<String>("欢迎使用Go语言！"),
-        StandardBloom.valToBinaryFromPudge<Float64>(1.6180339887)
+        StandardBloom.valToBinaryFromPudge("欢迎来到编程世界"),
+        StandardBloom.valToBinaryFromPudge(987654321098765432),
+        StandardBloom.valToBinaryFromPudge(2147483647),
+        StandardBloom.valToBinaryFromPudge(32000),
+        StandardBloom.valToBinaryFromPudge(9.876543210987654),
+        StandardBloom.valToBinaryFromPudge(0.0001234),
+        StandardBloom.valToBinaryFromPudge(42.42),
+        StandardBloom.valToBinaryFromPudge("编程真有趣！"),
+        StandardBloom.valToBinaryFromPudge("特殊字符：~!@#%^&*()_+{}|:\"<>?"),
+        StandardBloom.valToBinaryFromPudge(-123456789012345678),
+        StandardBloom.valToBinaryFromPudge("Data#1234🔢"),
+        StandardBloom.valToBinaryFromPudge(-2147483648),
+        StandardBloom.valToBinaryFromPudge(3.14159),
+        StandardBloom.valToBinaryFromPudge("💡💻🔧技术"),
+        StandardBloom.valToBinaryFromPudge("Java开发者的荣耀"),
+        StandardBloom.valToBinaryFromPudge(2.718281828),
+        StandardBloom.valToBinaryFromPudge(5000),
+        StandardBloom.valToBinaryFromPudge(-99999),
+        StandardBloom.valToBinaryFromPudge("欢迎使用Go语言！"),
+        StandardBloom.valToBinaryFromPudge(1.6180339887)
     ] 
 
     // 采用CangJie自带的toArray方法导入的多种类型的数据
