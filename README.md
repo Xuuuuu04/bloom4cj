@@ -148,3 +148,5 @@ main() {
 This project is supervised by [@zhangyin_gitcode](https://gitcode.com/zhangyin_gitcode) (HUAWEI Developer Advocate).
 
 ![DevAdvocate](https://raw.gitcode.com/SIGCANGJIE/homepage/attachment/uploads/9b648c07-efc2-4eb3-b02f-eab18c77beea/devadvocate.png)
+## 目录结构
+- 结构说明：[`doc/PROJECT_STRUCTURE.md`](./doc/PROJECT_STRUCTURE.md)
